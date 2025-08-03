@@ -1,7 +1,3 @@
-Absolutely! Here's the README translated into English:
-
----
-
 # ReselIT Smart Contract
 
 ## Description
@@ -85,23 +81,3 @@ if (ownsTicket) {
   // Deny entry
 }
 ```
-
----
-
-## Possible Improvements
-
-* Add ticket expiration and validity periods
-* Build a frontend for minting, resale, and QR code scanning
-* Implement real-time ownership verification on-chain
-* Support group ticket management and multi-ticket verification
-
----
-
-## Contact
-
-Developed by Jeremy Combe.
-For questions: [jeremy@example.com](mailto:jeremy@example.com)
-
----
-
-If you want, I can also prepare a ready-to-use Markdown file for you. Would you like that?
