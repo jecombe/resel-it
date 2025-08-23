@@ -1,0 +1,42 @@
+* { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, Arial, sans-serif; background: #0f1115; color: #fff; }
+a { color: #c7d2fe; text-decoration: none; }
+header { background: #141824; padding: 12px 20px; display:flex; gap:16px; align-items:center; }
+header nav { margin-left:auto; display:flex; gap:14px; }
+
+.container { max-width: 980px; margin: 32px auto; padding: 24px; background: #151a28; border-radius: 12px; }
+.card { padding:16px; border:1px solid #242a3b; border-radius:10px; background:#121725; margin-bottom:14px; }
+.row { display:flex; gap:12px; }
+input, select, button { padding: 10px 12px; border-radius: 8px; border: 1px solid #283047; background:#0c1020; color:#fff; }
+button { cursor:pointer; background:#3b82f6; border:none; }
+button:disabled { opacity:0.6; cursor:not-allowed; }
+label { display:block; margin:10px 0 6px; opacity:0.85; }
+.small { opacity:0.8; font-size: 14px; }
+
+.left {
+  flex: 1;
+}
+.right {
+  flex: 1;
+}
+.container.row {
+  display: flex;
+  gap: 24px;
+}
+.page-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 60px); /* adjust for header */
+  padding: 2rem;
+}
+
+.container {
+  width: 100%;
+  max-width: 600px; /* good width for a form */
+  background: #1a1a1a;
+  padding: 2rem;
+  border-radius: 12px;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+}
