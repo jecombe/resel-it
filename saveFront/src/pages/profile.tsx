@@ -1,27 +1,32 @@
-import { useAccount, useReadContract, useWriteContract } from "wagmi";
-import { useEffect, useMemo, useState } from "react";
-import { FACTORY_ADDRESS, EventFactoryABI, EventTicketABI, RESELIT_ADDRESS, ReselITABI } from "../utils/contract";
-import { formatEther, parseEther } from "viem";
+import { useState } from "react";
+import { useAccount, usePublicClient, useReadContract, useWriteContract } from "wagmi";
+import { parseEther, formatEther } from "viem";
 import Header from "../component/Header";
+import Loading from "../component/Loading";
+import { FACTORY_ADDRESS, EventFactoryABI, EventTicketABI, RESELIT_ADDRESS, ReselITABI } from "../utils/contract";
+import styles from "../styles/profile.module.css";
 
 export default function Profile() {
   const { address } = useAccount();
-
   const { data: events } = useReadContract({
     address: FACTORY_ADDRESS,
     abi: EventFactoryABI,
     functionName: "getEvents",
   }) as { data?: `0x${string}`[] };
 
+  if (!events) return <Loading message="Chargement de vos événements..." />;
+
   return (
     <>
       <Header />
-      <div className="container">
-        <h2>My profile</h2>
+      <div className={styles.container}>
+        <h2 className={styles.title}>My Profile</h2>
         {!address && <p>Connect your wallet to see your tickets.</p>}
-        {address && (!events?.length ? <p className="small">Nothing events for now</p> :
-          events.map((ev) => <OwnedTickets key={ev} eventAddress={ev} owner={address} />)
-        )}
+        {address && (!events.length ? (
+          <p className={styles.small}>No events for now</p>
+        ) : (
+          events.map(ev => <OwnedTickets key={ev} eventAddress={ev} owner={address} />)
+        ))}
       </div>
     </>
   );
@@ -39,11 +44,11 @@ function OwnedTickets({ eventAddress, owner }: { eventAddress: `0x${string}`, ow
   if (!tokenIds || tokenIds.length === 0) return null;
 
   return (
-    <div className="card">
+    <div className={styles.card}>
       <b>{String(name)}</b> — {eventAddress}
-      <div style={{marginTop:8}}>
-        {tokenIds.map((id) => <TicketItem key={`${eventAddress}-${id}`} eventAddress={eventAddress} tokenId={id} />)}
-      </div>
+      {tokenIds.map(id => (
+        <TicketItem key={`${eventAddress}-${id}`} eventAddress={eventAddress} tokenId={id} />
+      ))}
     </div>
   );
 }
@@ -51,37 +56,60 @@ function OwnedTickets({ eventAddress, owner }: { eventAddress: `0x${string}`, ow
 function TicketItem({ eventAddress, tokenId }: { eventAddress: `0x${string}`, tokenId: bigint }) {
   const { data: currentPrice } = useReadContract({ address: eventAddress, abi: EventTicketABI, functionName: "getCurrentPrice" });
   const [listPrice, setListPrice] = useState("0.2");
-  const { writeContractAsync, isPending } = useWriteContract();
+  const { writeContractAsync } = useWriteContract();
+  const [isLoading, setIsLoading] = useState(false);
+  const publicClient = usePublicClient();
 
+  if (!publicClient) return;
+  
   const approveAndList = async () => {
     try {
-      // 1) approve marketplace
-      await writeContractAsync({
+      setIsLoading(true);
+
+      // 1️⃣ Approve
+      const approveHash = await writeContractAsync({
         address: eventAddress,
         abi: EventTicketABI,
         functionName: "approve",
         args: [RESELIT_ADDRESS, tokenId],
       });
-      // 2) list
-      await writeContractAsync({
+      await publicClient.waitForTransactionReceipt({ hash: approveHash });
+
+      // 2️⃣ List Ticket
+      const listHash = await writeContractAsync({
         address: RESELIT_ADDRESS,
         abi: ReselITABI,
         functionName: "listTicket",
         args: [eventAddress, tokenId, parseEther(listPrice)],
       });
-      alert("Ticket List !");
-    } catch (e:any) {
+      await publicClient.waitForTransactionReceipt({ hash: listHash });
+
+      alert("Ticket Listed!");
+    } catch (e: any) {
       alert(e?.shortMessage || e.message || "Erreur");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="row" style={{justifyContent:"space-between", alignItems:"center", borderTop:"1px solid #242a3b", paddingTop:10, marginTop:10}}>
-      <div>Token #{String(tokenId)} — Current price (primary) : {currentPrice ? `${formatEther(currentPrice as bigint)} ETH` : "..."}</div>
-      <div className="row" style={{alignItems:"center"}}>
-        <input style={{width:140}} value={listPrice} onChange={e=>setListPrice(e.target.value)} />
-        <button disabled={isPending} onClick={approveAndList}>{isPending ? "Listing..." : "Lister"}</button>
+    <>
+      {isLoading && <Loading message="Listing en cours..." />}
+      <div className={styles.ticketRow}>
+        <div>
+          Token #{String(tokenId)} — Current price: {currentPrice ? `${formatEther(currentPrice as bigint)} ETH` : "..."}
+        </div>
+        <div className={styles.ticketRowInner}>
+          <input
+            className={styles.ticketInput}
+            value={listPrice}
+            onChange={e => setListPrice(e.target.value)}
+          />
+          <button className={styles.button} disabled={isLoading} onClick={approveAndList}>
+            {isLoading ? "Listing..." : "List"}
+          </button>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

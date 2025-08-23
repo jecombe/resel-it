@@ -1,102 +1,86 @@
-.container {
-  padding: 0 2rem;
-}
-
-.main {
-  min-height: 100vh;
-  padding: 4rem 0;
-  flex: 1;
+.hero {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
+  text-align: center;
+  padding: 4rem 2rem;
+  background: linear-gradient(180deg, #1b1c26 0%, #111214 100%);
+  min-height: calc(100vh - 60px);
+  color: #fff;
 }
 
-.footer {
-  display: flex;
-  flex: 1;
-  padding: 2rem 0;
-  border-top: 1px solid #eaeaea;
-  justify-content: center;
-  align-items: center;
-}
-
-.footer a {
+.logoContainer {
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-grow: 1;
+  padding: 1rem;
+  background: transparent;  /* tu peux ajouter un dégradé léger si tu veux */
 }
 
-.title a {
-  color: #0d76fc;
-  text-decoration: none;
+
+.logo {
+  width: 150px;              /* légèrement plus grand */
+  height: auto;              /* garder les proportions originales */
+  object-fit: contain;
+  border-radius: 0;          /* enlever le cercle si le logo n’est pas rond */
+  box-shadow: none;          /* enlever l’ombre si ce n’est pas nécessaire */
+  margin-bottom: 1.5rem;     /* espacement avec le titre */
 }
 
-.title a:hover,
-.title a:focus,
-.title a:active {
-  text-decoration: underline;
-}
 
 .title {
-  margin: 3rem 0;
-  line-height: 1;
-  font-size: 2.5rem;
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  background: linear-gradient(90deg, #3b82f6, #6366f1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-.title,
-.description {
-  text-align: center;
+.subtitle {
+  font-size: 1.25rem;
+  max-width: 600px;
+  margin-bottom: 3rem;
+  color: #c7d2fe;
 }
 
-.description {
-  margin: 0 0 2rem;
-  line-height: 1.5;
+.features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 2rem;
+  width: 100%;
+  max-width: 1000px;
+}
+
+.featureCard {
+  background: #222330;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.5);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.featureCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.6);
+}
+
+.featureCard h3 {
   font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #6366f1;
 }
 
-.grid {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  max-width: 800px;
+.featureCard p {
+  font-size: 1rem;
+  color: #c7d2fe;
 }
 
-.card {
-  margin: 1rem;
-  padding: 1.5rem;
-  text-align: left;
-  color: inherit;
-  text-decoration: none;
-  border: 1px solid #eaeaea;
-  border-radius: 10px;
-  transition: color 0.15s ease, border-color 0.15s ease;
-  max-width: 350px;
-}
-
-.card:hover,
-.card:focus,
-.card:active {
-  color: #0d76fc;
-  border-color: #0d76fc;
-}
-
-.card h2 {
-  margin: 0 0 1rem 0;
-  font-size: 1.2rem;
-}
-
-.card p {
-  margin: 0;
-  font-size: 1.2rem;
-  line-height: 1.5;
-}
-
-@media (max-width: 600px) {
-  .grid {
-    width: 100%;
-    flex-direction: column;
+@media (max-width: 768px) {
+  .title {
+    font-size: 2.25rem;
+  }
+  .subtitle {
+    font-size: 1rem;
   }
 }
