@@ -77,7 +77,7 @@ export default function ListResalePage() {
         <div className={styles.container}>
           <div className={styles.left}>
             <h2 className={styles.heading}>List My Tickets</h2>
-            {!userAddress && <p>Connecte ton wallet pour voir tes tickets.</p>}
+            {!userAddress && <p>Connect your wallet to see your tickets.</p>}
             {userAddress && events.map(ev => (
               <UserEventTickets
                 key={ev}
