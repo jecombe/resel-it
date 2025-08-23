@@ -60,15 +60,14 @@ function TicketItem({ eventAddress, tokenId }: { eventAddress: `0x${string}`, to
   const [listPrice, setListPrice] = useState("0.2");
   const { writeContractAsync } = useWriteContract();
   const [isLoading, setIsLoading] = useState(false);
-const publicClient = usePublicClient() as unknown as PublicClient;
+  const publicClient = usePublicClient() as unknown as PublicClient;
 
-  if (!publicClient) return;
-  
+  if (!publicClient) return null;
+
   const approveAndList = async () => {
     try {
       setIsLoading(true);
 
-      // 1️⃣ Approve
       const approveHash = await writeContractAsync({
         address: eventAddress,
         abi: EventTicketABI,
@@ -77,7 +76,6 @@ const publicClient = usePublicClient() as unknown as PublicClient;
       });
       await publicClient.waitForTransactionReceipt({ hash: approveHash });
 
-      // 2️⃣ List Ticket
       const listHash = await writeContractAsync({
         address: RESELIT_ADDRESS,
         abi: ReselITABI,
@@ -87,38 +85,30 @@ const publicClient = usePublicClient() as unknown as PublicClient;
       await publicClient.waitForTransactionReceipt({ hash: listHash });
 
       alert("Ticket Listed!");
-    }  catch (e: unknown) {
-  if (e instanceof Error) {
-    alert(e.message);
-  } else if (typeof e === "object" && e !== null && "shortMessage" in e) {
-    alert((e as { shortMessage: string }).shortMessage);
-  } else {
-    alert("Erreur inconnue");
-  }
-
+    } catch (e: unknown) {
+      if (e instanceof Error) alert(e.message);
+      else if (typeof e === "object" && e !== null && "shortMessage" in e) alert((e as { shortMessage: string }).shortMessage);
+      else alert("Erreur inconnue");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <>
-      {isLoading && <Loading message="Listing in progress ..." />}
-      <div className={styles.ticketRow}>
-        <div>
-          Token #{String(tokenId)} — Current price: {currentPrice ? `${formatEther(currentPrice as bigint)} ETH` : "..."}
-        </div>
-        <div className={styles.ticketRowInner}>
-          <input
-            className={styles.ticketInput}
-            value={listPrice}
-            onChange={e => setListPrice(e.target.value)}
-          />
-          <button className={styles.button} disabled={isLoading} onClick={approveAndList}>
-            {isLoading ? "Listing..." : "List"}
-          </button>
-        </div>
+    <div className={styles.ticketRow}>
+      <div>
+        Token #{String(tokenId)} — Current price: {currentPrice ? `${formatEther(currentPrice as bigint)} ETH` : "..."}
       </div>
-    </>
+      <div className={styles.ticketRowInner}>
+        <input
+          className={styles.ticketInput}
+          value={listPrice}
+          onChange={e => setListPrice(e.target.value)}
+        />
+        <button className={styles.button} disabled={isLoading} onClick={approveAndList}>
+          {isLoading ? "Listing..." : "List"}
+        </button>
+      </div>
+    </div>
   );
 }
