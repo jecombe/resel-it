@@ -8,7 +8,6 @@ import { FACTORY_ADDRESS, EventFactoryABI, EventTicketABI } from '../../utils/co
 import Header from '../../component/Header';
 import styles from '../../styles/events.module.css';
 import Loading from '../../component/Loading';
-import { waitForTransactionReceipt } from 'viem/actions';
 
 export default function EventsPage() {
   const { data: events } = useReadContract({
