@@ -6,9 +6,9 @@ export default function Header() {
     <header>
       <Link href="/"><b>🎟 ReselIT</b></Link>
       <nav>
-        <Link href="/events">Événements</Link>
-        <Link href="/profile">Profil</Link>
-        <Link href="/resale">Revente</Link>
+        <Link href="/events">Sales</Link>
+        <Link href="/resale">Resale</Link>
+        <Link href="/profile">Profile</Link>
       </nav>
       <ConnectButton />
     </header>
