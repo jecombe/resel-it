@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
  
 "use client"
 import { useState } from 'react';
@@ -144,15 +144,16 @@ const publicClient = usePublicClient() as unknown as PublicClient;
       
       await publicClient.waitForTransactionReceipt({ hash: tx });
 
-      // attendre que la transaction soit minée
       alert('Ticket acheté !');
     } catch (e: unknown) {
       if (e && typeof e === 'object') {
-        const msg = 'shortMessage' in e ? (e as any).shortMessage : 'message' in e ? (e as any).message : 'Erreur lors de l\'achat';
-        alert(msg);
-      } else {
-        alert('Erreur lors de l\'achat');
-      }
+    type PossibleError = { message?: string; shortMessage?: string };
+    const err = e as PossibleError;
+    const msg = err.shortMessage ?? err.message ?? "Erreur lors de l'achat";
+    alert(msg);
+  } else {
+    alert("Erreur lors de l'achat");
+  }
     } finally {
       setBuying(false);
     }
