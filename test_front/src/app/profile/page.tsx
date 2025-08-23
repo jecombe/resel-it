@@ -16,7 +16,7 @@ export default function Profile() {
     functionName: "getEvents",
   }) as { data?: `0x${string}`[] };
 
-  if (!events) return <Loading message="Chargement de vos événements..." />;
+  if (!events) return <Loading message="Loading your events..." />;
 
   return (
     <>
