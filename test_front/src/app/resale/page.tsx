@@ -38,7 +38,7 @@ export default function ListResalePage() {
 
   const handleListTicket = async (eventAddress: `0x${string}`, tokenId: bigint) => {
     const price = listPriceMap[`${eventAddress}-${tokenId}`];
-    if (!price) return alert("Entrez un prix valide");
+    if (!price) return alert("Entry a valid price");
 
     try {
       await listTicketAsync({
@@ -47,11 +47,11 @@ export default function ListResalePage() {
         functionName: "listTicket",
         args: [eventAddress, tokenId, parseEther(price)],
       });
-      alert("Ticket listé !");
+      alert("Ticket List !");
       setListPriceMap(prev => ({ ...prev, [`${eventAddress}-${tokenId}`]: "" }));
      
     } catch (e: any) {
-      alert(e?.shortMessage || e.message || "Erreur lors du listing");
+      alert(e?.shortMessage || e.message || "Error when listing");
     }
   };
 
@@ -64,9 +64,9 @@ export default function ListResalePage() {
         args: [eventAddress, tokenId],
         value: price,
       });
-      alert("Ticket acheté !");
+      alert("Ticket Buy !");
     } catch (e: any) {
-      alert(e?.shortMessage || e.message || "Erreur lors de l'achat");
+      alert(e?.shortMessage || e.message || "Error when buying");
     }
   };
 
