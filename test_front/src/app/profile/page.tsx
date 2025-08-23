@@ -103,7 +103,7 @@ const publicClient = usePublicClient() as unknown as PublicClient;
 
   return (
     <>
-      {isLoading && <Loading message="Listing en cours..." />}
+      {isLoading && <Loading message="Listing in progress ..." />}
       <div className={styles.ticketRow}>
         <div>
           Token #{String(tokenId)} — Current price: {currentPrice ? `${formatEther(currentPrice as bigint)} ETH` : "..."}

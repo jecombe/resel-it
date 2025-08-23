@@ -59,7 +59,7 @@ export default function EventsPage() {
 }
   }
 
-  if (!events) return <Loading message="Chargement des événements..." />;
+  if (!events) return <Loading message="Loading..." />;
 
   return (
     <>

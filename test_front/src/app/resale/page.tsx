@@ -34,7 +34,7 @@ export default function ListResalePage() {
     functionName: "getAllListings",
   }) as { data?: ResaleTicket[] };
 
-  if (!events || !allListings) return <Loading message="Chargement des données..." />;
+  if (!events || !allListings) return <Loading message="Loading data..." />;
 
   const handleListTicket = async (eventAddress: `0x${string}`, tokenId: bigint) => {
     const price = listPriceMap[`${eventAddress}-${tokenId}`];
