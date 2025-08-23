@@ -1,12 +1,14 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
  
 "use client"
 import { useState } from 'react';
-import { useReadContract, useWriteContract } from 'wagmi';
-import { formatEther, parseEther } from 'viem';
+import { usePublicClient, useReadContract, useWriteContract } from 'wagmi';
+import { formatEther, parseEther, PublicClient } from 'viem';
 import { FACTORY_ADDRESS, EventFactoryABI, EventTicketABI } from '../../utils/contract';
 import Header from '../../component/Header';
 import styles from '../../styles/events.module.css';
 import Loading from '../../component/Loading';
+import { waitForTransactionReceipt } from 'viem/actions';
 
 export default function EventsPage() {
   const { data: events } = useReadContract({
@@ -122,19 +124,41 @@ function EventCard({ address }: { address: `0x${string}` }) {
   const { data: maxTickets } = useReadContract({ address, abi: EventTicketABI, functionName: 'maxTickets' });
   const { data: ticketsSold } = useReadContract({ address, abi: EventTicketABI, functionName: 'ticketsSold' });
   const { data: currentPrice } = useReadContract({ address, abi: EventTicketABI, functionName: 'getCurrentPrice' });
+const publicClient = usePublicClient() as unknown as PublicClient;
 
-  const { writeContractAsync, isPending } = useWriteContract();
+  const { writeContractAsync } = useWriteContract();
+  const [buying, setBuying] = useState(false);
 
   async function buy() {
     if (!currentPrice) return;
-    await writeContractAsync({
-      address,
-      abi: EventTicketABI,
-      functionName: 'buyTicket',
-      args: [],
-      value: currentPrice as bigint,
-    });
+
+    try {
+      setBuying(true);
+      const tx = await writeContractAsync({
+        address,
+        abi: EventTicketABI,
+        functionName: 'buyTicket',
+        args: [],
+        value: currentPrice as bigint,
+      });
+      
+      await publicClient.waitForTransactionReceipt({ hash: tx });
+
+      // attendre que la transaction soit minée
+      alert('Ticket acheté !');
+    } catch (e: unknown) {
+      if (e && typeof e === 'object') {
+        const msg = 'shortMessage' in e ? (e as any).shortMessage : 'message' in e ? (e as any).message : 'Erreur lors de l\'achat';
+        alert(msg);
+      } else {
+        alert('Erreur lors de l\'achat');
+      }
+    } finally {
+      setBuying(false);
+    }
   }
+
+  if (!name || !symbol) return <Loading message="Chargement..." />;
 
   return (
     <div className={styles.card}>
@@ -144,8 +168,8 @@ function EventCard({ address }: { address: `0x${string}` }) {
       </div>
       <div className={styles.row} style={{ justifyContent: 'space-between' }}>
         <div>Current Price: {currentPrice ? `${formatEther(currentPrice as bigint)} ETH` : '...'}</div>
-        <button onClick={buy} disabled={!currentPrice || isPending}>
-          {isPending ? 'Buying...' : 'Buy'}
+        <button onClick={buy} disabled={!currentPrice || buying}>
+          {buying ? 'Buying...' : 'Buy'}
         </button>
       </div>
     </div>
