@@ -1,3 +1,4 @@
+ 
 "use client"
 import { useState } from "react";
 import { useAccount, usePublicClient, useReadContract, useWriteContract } from "wagmi";
@@ -6,7 +7,6 @@ import Header from "../../component/Header";
 import Loading from "../../component/Loading";
 import { FACTORY_ADDRESS, EventFactoryABI, EventTicketABI, RESELIT_ADDRESS, ReselITABI } from "../../utils/contract";
 import styles from "../../styles/Profile.module.css";
-import type { Chain } from "@rainbow-me/rainbowkit";
 
 export default function Profile() {
   const { address } = useAccount();
@@ -87,8 +87,15 @@ const publicClient = usePublicClient() as unknown as PublicClient;
       await publicClient.waitForTransactionReceipt({ hash: listHash });
 
       alert("Ticket Listed!");
-    } catch (e: any) {
-      alert(e?.shortMessage || e.message || "Erreur");
+    }  catch (e: unknown) {
+  if (e instanceof Error) {
+    alert(e.message);
+  } else if (typeof e === "object" && e !== null && "shortMessage" in e) {
+    alert((e as { shortMessage: string }).shortMessage);
+  } else {
+    alert("Erreur inconnue");
+  }
+
     } finally {
       setIsLoading(false);
     }

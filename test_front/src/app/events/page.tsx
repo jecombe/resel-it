@@ -1,3 +1,4 @@
+ 
 "use client"
 import { useState } from 'react';
 import { useReadContract, useWriteContract } from 'wagmi';
@@ -45,12 +46,17 @@ export default function EventsPage() {
       setBasePrice('0.05');
       setDynamicPricing(true);
       setPriceIncrement('0.01');
-    } catch (e: any) {
-      alert(e?.shortMessage || e.message || 'Error creating event.');
-    }
+    } catch (e: unknown) {
+  if (e && typeof e === "object") {
+    const shortMessage = "shortMessage" in e ? (e as { shortMessage: string }).shortMessage : undefined;
+    const message = "message" in e ? (e as { message: string }).message : undefined;
+    alert(shortMessage || message || "Error creating event.");
+  } else {
+    alert("Error creating event.");
+  }
+}
   }
 
-  // ⚡ Loading tant que events est undefined
   if (!events) return <Loading message="Chargement des événements..." />;
 
   return (
