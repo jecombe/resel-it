@@ -8,6 +8,7 @@ contract EventTicket is ERC721Enumerable, Ownable {
     uint256 public maxTickets;
     uint256 public ticketsSold;
     uint256 public basePrice;
+    uint256 public currentPrice;
     bool public dynamicPricing;
     uint256 public priceIncrement;
 
@@ -24,6 +25,8 @@ contract EventTicket is ERC721Enumerable, Ownable {
         basePrice = _basePrice;
         dynamicPricing = _dynamicPricing;
         priceIncrement = _priceIncrement;
+
+        currentPrice = basePrice;
     }
 
     function getTicketsOfOwner(
@@ -45,23 +48,34 @@ contract EventTicket is ERC721Enumerable, Ownable {
     }
 
     function getCurrentPrice() public view returns (uint256) {
-        if (!dynamicPricing) return basePrice;
-        return basePrice + (ticketsSold * priceIncrement);
+        return currentPrice;
     }
 
     function buyTicket() external payable {
         require(ticketsSold < maxTickets, "Sold out");
-        uint256 price = getCurrentPrice();
+        uint256 price = currentPrice;
         require(msg.value >= price, "Insufficient ETH");
 
         _safeMint(msg.sender, ticketsSold);
         ticketsSold++;
 
-        // Refund excess ETH
         if (msg.value > price) {
             payable(msg.sender).transfer(msg.value - price);
         }
 
         payable(owner()).transfer(price);
+
+        if (dynamicPricing) {
+            currentPrice = basePrice + (ticketsSold * priceIncrement);
+        }
+    }
+
+    function decreaseBasePrice() external {
+        require(currentPrice >= priceIncrement, "Price cannot go below 0");
+        currentPrice -= priceIncrement;
+
+        if (dynamicPricing && basePrice >= priceIncrement) {
+            basePrice -= priceIncrement;
+        }
     }
 }
