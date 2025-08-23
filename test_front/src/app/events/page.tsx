@@ -143,22 +143,22 @@ const publicClient = usePublicClient() as unknown as PublicClient;
       
       await publicClient.waitForTransactionReceipt({ hash: tx });
 
-      alert('Ticket acheté !');
+      alert('Ticket Buy !');
     } catch (e: unknown) {
       if (e && typeof e === 'object') {
     type PossibleError = { message?: string; shortMessage?: string };
     const err = e as PossibleError;
-    const msg = err.shortMessage ?? err.message ?? "Erreur lors de l'achat";
+    const msg = err.shortMessage ?? err.message ?? "Error when buying";
     alert(msg);
   } else {
-    alert("Erreur lors de l'achat");
+    alert("Error when buying");
   }
     } finally {
       setBuying(false);
     }
   }
 
-  if (!name || !symbol) return <Loading message="Chargement..." />;
+  if (!name || !symbol) return <Loading message="Loading..." />;
 
   return (
     <div className={styles.card}>
