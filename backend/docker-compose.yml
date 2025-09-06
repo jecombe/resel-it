@@ -9,7 +9,7 @@ services:
       POSTGRES_PASSWORD: mypassword
       POSTGRES_DB: mydb
     ports:
-      - "55432:5432"  # <-- host:container
+      - "55432:5432"  # host:container
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
@@ -28,11 +28,11 @@ services:
       - /app/node_modules
     environment:
       DATABASE_URL: postgres://myuser:mypassword@postgres:5432/mydb
-      PORT: 3000
+      PORT: 4000        # <-- le backend écoute sur ce port
     depends_on:
       - postgres
     ports:
-      - "3000:3000"
+      - "4000:4000"     # <-- expose ce port sur la machine hôte
 
 volumes:
   postgres_data:
